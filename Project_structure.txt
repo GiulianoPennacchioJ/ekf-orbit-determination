@@ -1,0 +1,25 @@
+ekf-orbit-determination/
+│
+├── README.md                     -> Documentazione di progetto (Teoria, Architecture, Plot, NIS)
+├── LICENSE                       -> Licenza open-source (es. MIT)
+├── .gitignore                    -> Esclusione file temporanei di Simulink (*.slxc, *.autosave)
+│
+├── config/
+│   ├── init_simulation.m        -> Script master di configurazione (Costanti, Parametri EKF, Q, R, P0)
+│   └── egm96_coefficients.mat   -> Tabella coefficienti armonici sferici (C_nm, S_nm fino a 20x20)
+│
+├── src/
+│   ├── ekf_orbit_sim.slx        -> MODELLO SIMULINK TOP-LEVEL
+│   │
+│   └── functions/               -> Funzioni helper per i blocchi MATLAB Function
+│       ├── gravity_egm96.m      -> Calcolo accelerazione gravitazionale da armoniche sferiche
+│       ├── third_body_sun_moon.m-> Accelerazione gravitazionale di Luna e Sole (Spice/Ephemerides)
+│       ├── atmospheric_drag.m   -> Accelerazione di drag (modello di densità)
+│       ├── srp_force.m          -> Accelerazione da pressione di radiazione solare
+│       ├── jacobian_j2.m        -> Calcolo analitico della Jacobiana F(x) per l'EKF
+│       └── ekf_update.m         -> Equazioni di aggiornamento discreto dell'EKF
+│
+└── diagnostics/
+    ├── run_and_evaluate.m       -> Entry point: lancia Simulink e genera la Dashboard di diagnostica
+    ├── plot_3sigma_bounds.m     -> Script grafico per errori di stima vs bande +-3sigma
+    └── test_nis_consistency.m   -> Script di calcolo e plot del test NIS (Normalized Innovation Squared)
