@@ -1,0 +1,22 @@
+STEP 1: Setup dell'Ambiente e Script di Inizializzazione
+   │
+   ▼
+STEP 2: Costruzione e Validazione del "Truth Simulator"
+   │
+   ▼
+STEP 3: Modello del Sensore GNSS e Generazione Misure Sintetiche
+   │
+   ▼
+STEP 4: Implementazione del "Core EKF" (Prediction & Correction)
+   │
+   ▼
+STEP 5: Integrazione Top-Level in Simulink e Sincronizzazione dei Tempi
+   │
+   ▼
+STEP 6: Tuning delle Matrici Q ed R e Gestione del Model Mismatch
+   │
+   ▼
+STEP 7: Modulo di Diagnostica Avanzata (Bande 3σ e NIS Test)
+   │
+   ▼
+STEP 8: Documentazione, Repository GitHub e Report di Portfolio
