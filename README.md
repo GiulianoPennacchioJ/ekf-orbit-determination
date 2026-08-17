@@ -33,7 +33,7 @@ The framework was evaluated using a simulated Low Earth Orbit (LEO) mission scen
    * Computes measurement innovation residuals against $\pm 3\sqrt{S_k}$ bounds alongside the **Normalized Innovation Squared (NIS)** test against the $\chi^2$ distribution.
 
 5. **Automated Diagnostic Reporting:**
-   * Generates a complete post-processing suite of 6 executive validation figures verifying convergence, consistency, and robustness[cite: 1].
+   * Generates a complete post-processing suite of 6 executive validation figures verifying convergence, consistency, and robustness.
 
 ---
 
@@ -42,23 +42,29 @@ The framework was evaluated using a simulated Low Earth Orbit (LEO) mission scen
 ```text
 ekf-orbit-determination/
 ├── config/
-│   └── spacecraft_params.mat     # Orbital constants, mass, and covariance matrices
-├── core/
-│   ├── ekf_propagate.m           # Nonlinear state propagation & Jacobian evaluation
-│   ├── ekf_update.m              # Measurement assimilation & Kalman gain computation
-│   └── state_transition.m        # State transition matrix (STM) integration
-├── physics/
-│   ├── gravity_model.m           # Perturbation forces & central body gravity
-│   └── gnss_simulator.m          # GNSS measurement stream & fault injection engine
-├── validation/
-│   ├── mahalanobis_test.m        # Outlier rejection and gating logic (RAIM)
-│   ├── nis_consistency.m         # Normalized Innovation Squared chi-square test
-│   └── residual_analyzer.m       # Innovation residual bounds evaluator
-├── reports/
-│   ├── generate_all_figures.m    # Matplotlib/MATLAB high-resolution visualization suite
-│   └── output/                   # Exported diagnostic figures directory
-├── main_simulation.m             # Master pipeline orchestration script
-├── requirements.txt              # MATLAB toolboxes and dependencies
+│   └── init_simulation.m          # Simulation initialization script & parameters
+├── diagnostics/
+│   ├── test_functions_unit.m      # Unit tests for physical and filtering models
+│   └── validate_truth_simulator.m # Validation script for truth dynamics propagation
+├── figures/
+│   ├── 01_initial_convergence.png
+│   ├── 02_3sigma_consistency.png
+│   ├── 03_velocity_3sigma.png
+│   ├── 04_outlier_rejection.png
+│   ├── 05_innovation_residuals.png
+│   └── 06_nis_consistency_test.png
+├── src/
+│   ├── ekf_orbit_sim.slx         # Simulink master EKF simulation model
+│   └── functions/
+│       ├── atmospheric_drag.m    # Drag perturbation model
+│       ├── ekf_predict_update.m  # EKF prediction and measurement update routines
+│       ├── gnss_sensor_model.m   # GNSS observation and fault injection model
+│       ├── gravity_egm96.m       # Central body gravity and harmonic perturbations
+│       ├── jacobian_j2.m         # State transition and Jacobian evaluation routines
+│       ├── srp_force.m           # Solar Radiation Pressure (SRP) perturbation model
+│       ├── third_body_sun_moon.m # Third-body gravitational perturbation model
+│       └── truth_dynamics.m      # High-fidelity truth orbital dynamics engine
+├── generate_readme_figures.m     # Script to compile and export diagnostic figures
 └── README.md
 ```
 
@@ -67,7 +73,7 @@ ekf-orbit-determination/
 ### 1. Initial Convergence Transient
 ![Initial Convergence](figures/01_initial_convergence.png)
 
-* **Transient Step Response:** The initial state uncertainty or propagation gap produces an elevated error profile that collapses instantly to zero upon the assimilation of the first valid GNSS measurement update at $t \approx 1\text{ s}$[cite: 1]. This demonstrates rapid observability and minimal transient latency in the state estimator[cite: 1].
+* **Transient Step Response:** The initial state uncertainty or propagation gap produces an elevated error profile that collapses instantly to zero upon the assimilation of the first valid GNSS measurement update at $t \approx 1\text{ s}$. This demonstrates rapid observability and minimal transient latency in the state estimator.
 
 ---
 
