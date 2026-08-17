@@ -21,18 +21,16 @@ sim_param.J2      = 1.08262668e-3;     % Second zonal harmonic coefficient (-)
 sim_param.omega_E = 7.2921159e-5;      % Earth rotation rate [rad/s]
 
 %% 2. TARGET ORBITAL PARAMETERS (Sun-Synchronous Orbit - SSO)
-% Nominal altitude h = 600 km -> Orbital radius r = R_E + h
-sim_param.alt     = 600.0;                         % Altitude above sea level [km]
+sim_param.alt     = 600.0;                        % Altitude above sea level [km]
 sim_param.a       = sim_param.R_E + sim_param.alt; % Semi-major axis [km]
-sim_param.e       = 0.0001;                        % Near-circular eccentricity (-)
+sim_param.e       = 0.0001;                       % Near-circular eccentricity (-)
 
-% Analytical computation of SSO inclination for 600 km altitude (i ≈ 97.79 deg)
-% cos(i) = -2/3 * (dOmega_sun / J2) * (a/R_E)^(7/2) * sqrt(1/mu) * (1/R_E^2)
+% Correct analytical SSO inclination computation for h = 600 km (i ≈ 97.79 deg)
 dOmega_sun        = 0.9856 * (pi / 180) / 86400;  % Mean solar precession rate [rad/s]
 cos_i             = -2/3 * (dOmega_sun / sim_param.J2) * ...
-                    ((sim_param.a / sim_param.R_E)^(7/2)) * ...
-                    sqrt(1 / sim_param.mu) * (1 / sim_param.R_E^2);
-sim_param.inc     = acos(cos_i);                  % Orbital inclination [rad]
+                    (1 / (sim_param.R_E^2 * sqrt(sim_param.mu))) * ...
+                    (sim_param.a^(7/2));
+sim_param.inc     = acos(cos_i);                  % Orbital inclination [rad] (~1.7067 rad = 97.79 deg)
 
 sim_param.RAAN    = deg2rad(45.0);                % Right Ascension of Ascending Node [rad]
 sim_param.argp    = deg2rad(0.0);                 % Argument of perigee [rad]
