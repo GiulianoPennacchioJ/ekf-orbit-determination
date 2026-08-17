@@ -79,11 +79,12 @@ sigma_v_gnss = 5.0e-5;                 % Velocity noise std dev [km/s] (0.05 m/s
 
 R = diag([sigma_r_gnss^2 * ones(1,3), sigma_v_gnss^2 * ones(1,3)]);
 
-% 6.3 Process Noise Covariance Matrix (Q)
-% Tuned to compensate for the active Model Mismatch
-% (Truth: EGM96 20x20 + Drag + SRP vs On-board Filter: truncated mu + J2)
-q_pos = 1.0e-10;                       % Kinematic process uncertainty [km^2]
-q_vel = 1.0e-8;                        % Dynamic unmodeled acceleration uncertainty [km^2/s^2]
+% 6.3 Process Noise Covariance Matrix (Q) - RETUNED FOR STEP 6
+% Compensates for unmodeled high-degree harmonics (EGM96 20x20 vs J2 EKF model)
+% Unit: Position [km^2], Velocity [(km/s)^2]
+
+q_pos = 1.0e-8;  % Kinematic process noise spectral density [km^2]
+q_vel = 1.0e-5;  % Dynamic noise: accounts for ~3.16 mm/s^2 unmodeled acceleration [(km/s)^2]
 
 Q = diag([q_pos * ones(1,3), q_vel * ones(1,3)]);
 

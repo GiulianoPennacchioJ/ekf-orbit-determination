@@ -26,22 +26,34 @@ function [x_hat_out, P_out, y_innov, S_innov] = ekf_predict_update(x_hat_in, P_i
     Phi = eye(6) + F * dt; % First-order State Transition Matrix approximation
     P_priori = Phi * P_in * Phi' + Q;
     
-    %% 2. CORRECTION / UPDATE STEP (Executed at 1 Hz when meas_available == 1)
+    %% 2. CORRECTION / UPDATE STEP WITH MAHALANOBIS GATING
     if meas_available
-        % Measurement Matrix (Direct state observation)
+        % Measurement Matrix (Direct state observation [6x6])
         H = eye(6);
         
         % Innovation computation
         y_innov = z_gnss - x_hat_priori;
         S_innov = H * P_priori * H' + R;
         
-        % Kalman Gain computation
-        K = (P_priori * H') / S_innov;
+        % Squared Mahalanobis Distance Metric (6 Degrees of Freedom)
+        D_m2 = y_innov' * (S_innov \ y_innov);
         
-        % State and Covariance Update (Joseph form for numerical stability)
-        x_hat_out = x_hat_priori + K * y_innov;
-        I_KH = eye(6) - K * H;
-        P_out = I_KH * P_priori * I_KH' + K * R * K';
+        % Chi-Square threshold for 6 DOF (p = 0.9973 / 3-sigma bound)
+        gamma_threshold = 18.55;
+        
+        if D_m2 <= gamma_threshold
+            % Valid Measurement -> Compute Kalman Gain & Perform Update
+            K = (P_priori * H') / S_innov;
+            
+            % State and Covariance Update (Joseph form for numerical stability)
+            x_hat_out = x_hat_priori + K * y_innov;
+            I_KH = eye(6) - K * H;
+            P_out = I_KH * P_priori * I_KH' + K * R * K';
+        else
+            % Outlier Detected -> Reject Measurement (Pure Propagation)
+            x_hat_out = x_hat_priori;
+            P_out     = P_priori;
+        end
     else
         % No measurement available: Priori state and covariance passed through
         x_hat_out = x_hat_priori;
