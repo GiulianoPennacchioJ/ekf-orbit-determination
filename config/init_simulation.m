@@ -87,6 +87,13 @@ q_vel = 1.0e-8;                        % Dynamic unmodeled acceleration uncertai
 
 Q = diag([q_pos * ones(1,3), q_vel * ones(1,3)]);
 
+% Pre-allocate 21x21 matrices for gravity field model
+C_nm = zeros(21, 21);
+S_nm = zeros(21, 21);
+
+% Set J2 coefficient directly into C(2,0) position (degree 2, order 0)
+C_nm(3,1) = -sim_param.J2; % In MATLAB indexing: row = degree+1, col = order+1
+
 %% 7. AUXILIARY FUNCTION: OE2ECI (Keplerian Elements to ECI Cartesian Transformation)
 function [r_eci, v_eci] = oe2eci(a, e, inc, RAAN, argp, nu, mu)
     % Compute magnitude and perifocal state vector
